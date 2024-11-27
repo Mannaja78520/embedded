@@ -19,7 +19,6 @@ void singleStep(bool forward);
 void stepForward(int steps);
 void stepBackward(int steps);
 void moveToAngle(float targetAngle);
-void moveToCuntry(String target);
 
 void setup() {
   // Initialize motor control pins as outputs
@@ -36,22 +35,31 @@ void setup() {
 
   // Initialize Serial communication
   Serial.begin(115200);
-  Serial.println("Stepper motor ready. Enter target Country:");
+  Serial.println("Stepper motor ready. Enter target angle (0-360):");
 }
 
 void loop() {
   // Check if there is input from Serial
   if (Serial.available() > 0) {
-    String Country = Serial.readStringUntil('\n'); // Read input until newline
-    Country.trim(); // Remove whitespace
+    String input = Serial.readStringUntil('\n'); // Read input until newline
+    input.trim(); // Remove whitespace
 
-    Serial.print("Moving to ");
-    Serial.print(Country);
+    // Convert input to float
+    float targetAngle = input.toFloat();
 
-    // Move motor to target angle
-    moveToCuntry(Country);
+    // Validate the input
+    if (targetAngle >= 0 && targetAngle <= 360) {
+      Serial.print("Moving to ");
+      Serial.print(targetAngle);
+      Serial.println(" degrees...");
 
-    Serial.println("Movement complete.");
+      // Move motor to target angle
+      moveToAngle(targetAngle);
+
+      Serial.println("Movement complete.");
+    } else {
+      Serial.println("Invalid input. Please enter a value between 0 and 360.");
+    }
   }
 }
 
@@ -109,25 +117,4 @@ void moveToAngle(float targetAngle) {
 
   // Update the current position
   currentAngle = targetAngle;
-}
-void moveToCuntry(String target){
-  if (target == "THAILAND") {
-    moveToAngle(0);
-  } else if (target == "UK") {
-    moveToAngle(1*360.0/8.0);
-  } else if (target == "RUSSIA") {
-    moveToAngle(2*360.0/8.0);
-  } else if (target == "FRANCE") {
-    moveToAngle(3*360.0/8.0);
-  } else if (target == "JAPAN") {
-    moveToAngle(4*360.0/8.0);
-  } else if (target == "BRAZILL") {
-    moveToAngle(5*360.0/8.0);
-  } else if (target == "INDIA") {
-    moveToAngle(6*360.0/8.0);
-  } else if (target == "AUSTRALIA") {
-    moveToAngle(7*360.0/8.0);
-  } else {
-    Serial.println("Invalid country name. Supported countries: THAILAND, UK, RUSSIA, FRANCE, JAPAN, BRAZILL, INDIA, AUSTRALIA");
-  }
 }
