@@ -5,6 +5,7 @@
 #define in2  0
 #define in3  2
 #define in4  15
+#define LED  18
 
 // Stepper motor configuration
 const int stepsPerRevolution = 2048; // 28BYJ-48 motor with gearbox
@@ -13,6 +14,14 @@ const int stepDelay = 3; // Delay between steps in milliseconds
 // Motor state
 int stepState = 0;
 float currentAngle = 0.0; // Current position in degrees
+float THAILANDAngle = 0;
+float UKAngle = 1*360.0/8.0;
+float RUSSIAAngle = 2*360.0/8.0;
+float FRANCEAngle = 3*360.0/8.0;
+float JAPANAngle = 4*360.0/8.0;
+float BRAZILAngle = 5*360.0/8.0;
+float INDIAAngle = 6*360.0/8.0;
+float AUSTRALIAAngle = 7*360.0/8.0;
 
 // Function prototypes
 void singleStep(bool forward);
@@ -27,12 +36,14 @@ void setup() {
   pinMode(in2, OUTPUT);
   pinMode(in3, OUTPUT);
   pinMode(in4, OUTPUT);
+  pinMode(LED, OUTPUT);
 
   // Ensure all motor pins are LOW at start
   digitalWrite(in1, LOW);
   digitalWrite(in2, LOW);
   digitalWrite(in3, LOW);
   digitalWrite(in4, LOW);
+  digitalWrite(LED, LOW);
 
   // Initialize Serial communication
   Serial.begin(115200);
@@ -46,7 +57,7 @@ void loop() {
     Country.trim(); // Remove whitespace
 
     Serial.print("Moving to ");
-    Serial.print(Country);
+    Serial.println(Country);
 
     // Move motor to target angle
     moveToCuntry(Country);
@@ -82,14 +93,18 @@ void singleStep(bool forward) {
 void stepForward(int steps) {
   for (int i = 0; i < steps; i++) {
     singleStep(true);
+    digitalWrite(LED, HIGH);
   }
+  digitalWrite(LED, LOW);
 }
 
 // Function to move the motor backward for a specific number of steps
 void stepBackward(int steps) {
   for (int i = 0; i < steps; i++) {
     singleStep(false);
+    digitalWrite(LED, HIGH);
   }
+  digitalWrite(LED, LOW);
 }
 
 // Function to move the motor to a specific angle
@@ -106,27 +121,26 @@ void moveToAngle(float targetAngle) {
   } else if (steps < 0) {
     stepBackward(-steps);
   }
-
   // Update the current position
   currentAngle = targetAngle;
 }
 void moveToCuntry(String target){
   if (target == "THAILAND") {
-    moveToAngle(0);
+    moveToAngle(THAILANDAngle);
   } else if (target == "UK") {
-    moveToAngle(1*360.0/8.0);
+    moveToAngle(UKAngle);
   } else if (target == "RUSSIA") {
-    moveToAngle(2*360.0/8.0);
+    moveToAngle(RUSSIAAngle);
   } else if (target == "FRANCE") {
-    moveToAngle(3*360.0/8.0);
+    moveToAngle(FRANCEAngle);
   } else if (target == "JAPAN") {
-    moveToAngle(4*360.0/8.0);
-  } else if (target == "BRAZILL") {
-    moveToAngle(5*360.0/8.0);
+    moveToAngle(JAPANAngle);
+  } else if (target == "BRAZIL") {
+    moveToAngle(BRAZILAngle);
   } else if (target == "INDIA") {
-    moveToAngle(6*360.0/8.0);
+    moveToAngle(INDIAAngle);
   } else if (target == "AUSTRALIA") {
-    moveToAngle(7*360.0/8.0);
+    moveToAngle(AUSTRALIAAngle);
   } else {
     Serial.println("Invalid country name. Supported countries: THAILAND, UK, RUSSIA, FRANCE, JAPAN, BRAZILL, INDIA, AUSTRALIA");
   }
