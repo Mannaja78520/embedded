@@ -1,16 +1,16 @@
 #include <Arduino.h>
 
-#define MOTOR  23
+#define Relay  23
 
 void setup()
 {
-  pinMode(MOTOR, OUTPUT);
+  pinMode(Relay, OUTPUT);
 }
 
 void loop()
 {
-  digitalWrite(MOTOR, HIGH);
+  digitalWrite(Relay, HIGH);
   delay(5000); // Wait for 5000 millisecond(s)
-  digitalWrite(MOTOR,LOW);
+  digitalWrite(Relay,LOW);
   delay(5000); // Wait for 5000 millisecond(s)
 }
