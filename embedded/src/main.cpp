@@ -70,27 +70,33 @@ void setup() {
   connect();
 
   Serial.println("Stepper motor ready. Enter target Country:");
+  client.publish(mqtt_topic, "Stepper motor ready. Enter target Country:");
+  
 }
 
 void loop() {
   client.loop();
   delay(10);
+  // client.publish(mqtt_topic, "Counter = ");
   if (!client.connected()) {
     connect();
   }
-  // Check if there is input from Serial
-  if (Serial.available() > 0) {
-    String Country = Serial.readStringUntil('\n'); // Read input until newline
-    Country.trim(); // Remove whitespace
 
-    Serial.print("Moving to ");
-    Serial.println(Country);
 
-    // Move motor to target angle
-    moveToCuntry(Country);
 
-    Serial.println("Movement complete.");
-  }
+  // // Check if there is input from Serial
+  // if (Serial.available() > 0) {
+  //   String Country = Serial.readStringUntil('\n'); // Read input until newline
+  //   Country.trim(); // Remove whitespace
+
+  //   Serial.print("Moving to ");
+  //   Serial.println(Country);
+
+  //   // Move motor to target angle
+  //   moveToCuntry(Country);
+
+  //   Serial.println("Movement complete.");
+  // }
 }
 
 // Function to execute a single step in the desired direction
@@ -170,6 +176,7 @@ void moveToCuntry(String target){
     moveToAngle(AUSTRALIAAngle);
   } else {
     Serial.println("Invalid country name. Supported countries: THAILAND, UK, RUSSIA, FRANCE, JAPAN, BRAZILL, INDIA, AUSTRALIA");
+    client.publish(mqtt_topic, "Invalid country name. Supported countries: THAILAND, UK, RUSSIA, FRANCE, JAPAN, BRAZILL, INDIA, AUSTRALIA");
   }
 }
 
@@ -194,7 +201,20 @@ void connect() {
 
 
 void messageReceived(String &topic, String &payload) {
+  if (payload.length() == 0) return;
   Serial.println("incoming: " + topic + " - " + payload);
+
+  // Check if payload is empty
+
+  if (topic == "group/command") {
+    Serial.println(payload.length());
+    if (payload.length() >= 15) return;
+    String Country = payload; 
+    Country.trim();
+    Serial.println(Country);
+    moveToCuntry(Country);
+    client.publish(mqtt_topic, "Movement complete.");
+  }
 
   // Note: Do not use the client in the callback to publish, subscribe or
   // unsubscribe as it may cause deadlocks when other things arrive while
