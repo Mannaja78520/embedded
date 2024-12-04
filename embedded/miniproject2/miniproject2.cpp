@@ -15,7 +15,7 @@ const char pass[] = "qwertyui";
 
 const char mqtt_broker[]="test.mosquitto.org";
 const char mqtt_topic[]="group/command";
-const char mqtt_client_id[]="arduino_group_x"; // must change this string to a unique value
+const char mqtt_client_id[]="capybara"; // must change this string to a unique value
 int MQTT_PORT=1883;
 
 
