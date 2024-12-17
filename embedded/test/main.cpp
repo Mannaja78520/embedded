@@ -15,10 +15,9 @@ const char pass[] = "qwertyui";
 
 const char mqtt_broker[]="test.mosquitto.org";
 const char mqtt_topic[]="group/command";
-const char mqtt_client_id[]="capybara"; // must change this string to a unique value
+const char mqtt_client_id[]="arduino_group_x"; // must change this string to a unique value
 int MQTT_PORT=1883;
-bool buttonState = HIGH;    // สถานะปุ่มปัจจุบัน
-bool lastButtonState = HIGH;
+
 
 WiFiClient net;
 MQTTClient client;
@@ -71,33 +70,27 @@ void setup() {
   connect();
 
   Serial.println("Stepper motor ready. Enter target Country:");
-  client.publish(mqtt_topic, "Stepper motor ready. Enter target Country:");
-  
 }
 
 void loop() {
   client.loop();
   delay(10);
-  // client.publish(mqtt_topic, "Counter = ");
   if (!client.connected()) {
     connect();
   }
+  // Check if there is input from Serial
+  if (Serial.available() > 0) {
+    String Country = Serial.readStringUntil('\n'); // Read input until newline
+    Country.trim(); // Remove whitespace
 
+    Serial.print("Moving to ");
+    Serial.println(Country);
 
+    // Move motor to target angle
+    moveToCuntry(Country);
 
-  // // Check if there is input from Serial
-  // if (Serial.available() > 0) {
-  //   String Country = Serial.readStringUntil('\n'); // Read input until newline
-  //   Country.trim(); // Remove whitespace
-
-  //   Serial.print("Moving to ");
-  //   Serial.println(Country);
-
-  //   // Move motor to target angle
-  //   moveToCuntry(Country);
-
-  //   Serial.println("Movement complete.");
-  // }
+    Serial.println("Movement complete.");
+  }
 }
 
 // Function to execute a single step in the desired direction
@@ -177,7 +170,6 @@ void moveToCuntry(String target){
     moveToAngle(AUSTRALIAAngle);
   } else {
     Serial.println("Invalid country name. Supported countries: THAILAND, UK, RUSSIA, FRANCE, JAPAN, BRAZILL, INDIA, AUSTRALIA");
-    client.publish(mqtt_topic, "Invalid country name. Supported countries: THAILAND, UK, RUSSIA, FRANCE, JAPAN, BRAZILL, INDIA, AUSTRALIA");
   }
 }
 
@@ -202,20 +194,7 @@ void connect() {
 
 
 void messageReceived(String &topic, String &payload) {
-  if (payload.length() == 0) return;
   Serial.println("incoming: " + topic + " - " + payload);
-
-  // Check if payload is empty
-
-  if (topic == "group/command") {
-    Serial.println(payload.length());
-    if (payload.length() >= 15) return;
-    String Country = payload; 
-    Country.trim();
-    Serial.println(Country);
-    moveToCuntry(Country);
-    client.publish(mqtt_topic, "Movement complete.");
-  }
 
   // Note: Do not use the client in the callback to publish, subscribe or
   // unsubscribe as it may cause deadlocks when other things arrive while
