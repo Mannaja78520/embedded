@@ -14,7 +14,8 @@ const char ssid[] = "manny";
 const char pass[] = "qwertyui";
 
 const char mqtt_broker[]="test.mosquitto.org";
-const char mqtt_topic[]="group/command";
+const char mqtt_command_input_topic[]="group1.2/command/input";
+const char mqtt_command_output_topic[]="group1.2/command/output";
 const char mqtt_client_id[]="capybara"; // must change this string to a unique value
 int MQTT_PORT=1883;
 
@@ -70,7 +71,7 @@ void setup() {
   connect();
 
   Serial.println("Stepper motor ready. Enter target Country:");
-  client.publish(mqtt_topic, "Stepper motor ready. Enter target Country:");
+  client.publish(mqtt_command_output_topic, "Stepper motor ready. Enter target Country:");
   
 }
 
@@ -176,7 +177,7 @@ void moveToCuntry(String target){
     moveToAngle(AUSTRALIAAngle);
   } else {
     Serial.println("Invalid country name. Supported countries: THAILAND, UK, RUSSIA, FRANCE, JAPAN, BRAZILL, INDIA, AUSTRALIA");
-    client.publish(mqtt_topic, "Invalid country name. Supported countries: THAILAND, UK, RUSSIA, FRANCE, JAPAN, BRAZILL, INDIA, AUSTRALIA");
+    client.publish(mqtt_command_output_topic, "Invalid country name. Supported countries: THAILAND, UK, RUSSIA, FRANCE, JAPAN, BRAZILL, INDIA, AUSTRALIA");
   }
 }
 
@@ -195,7 +196,8 @@ void connect() {
 
   Serial.println("\nconnected!");
 
-  client.subscribe(mqtt_topic);
+  client.subscribe(mqtt_command_input_topic);
+  client.subscribe(mqtt_command_output_topic);
   // client.unsubscribe("/hello");
 }
 
@@ -213,7 +215,7 @@ void messageReceived(String &topic, String &payload) {
     Country.trim();
     Serial.println(Country);
     moveToCuntry(Country);
-    client.publish(mqtt_topic, "Movement complete.");
+    client.publish(mqtt_command_output_topic, "Movement complete.");
   }
 
   // Note: Do not use the client in the callback to publish, subscribe or
