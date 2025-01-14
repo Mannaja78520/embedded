@@ -1,30 +1,28 @@
 #include <Arduino.h>
-#include <Wire.h>
-#include <SPI.h>
+#include <Wire.h>  // Include Arduino Wire library for I2C communication
+// #include <Adafruit_Sensor.h>  // Include Adafruit Sensor library
+#include <Adafruit_PCF8574.h>  // Include Adafruit PCF8574 library
 
-#define LDR  35    // use gpio36 or Analog 1 pin for input
-#define LED 4
+#define PCF8574_Address 0x20
+/* Example for 1 output LED that is connected from power to the GPIO expander pin #7
+ * Note the LEDs must be connected with the CATHODES to the expander, to SINK current!
+ * The PCF8574 cannot SOURCE current!
+ */
 
-int LDR_Value = 0;
-int static_variable = 250;
+#define PCF8574_Address 0x20
 
+Adafruit_PCF8574 pcf;
 void setup() {
-  pinMode(LED, OUTPUT);
-  digitalWrite(LED, HIGH);
-  Serial.begin(115200);
+  Serial.begin(9600);
+  Serial.println("Adafruit PCF8574 LED blink test");
+  if (!pcf.begin(PCF8574_Address, &Wire)) {
+    Serial.println("Couldn't find PCF8574");
+  }
+  pcf.pinMode(7, OUTPUT);
 }
-
 void loop() {
-  LDR_Value = analogRead(LDR);
-
-  // Serial.print("Variable_1:");
-  if (LDR_Value <= static_variable) digitalWrite(LED, HIGH);
-  else digitalWrite(LED, LOW);
-  Serial.print(">LDR_Value: ");
-  Serial.println(LDR_Value);
-  Serial.println(LDR_Value);
-  // Serial.print(",");
-  // Serial.print("Variable_2:");
-  // Serial.println(static_variable);
-  delay(20);
+  pcf.digitalWrite(7, LOW);  // turn LED on by sinking current to ground
+  delay(1000);
+  pcf.digitalWrite(7, HIGH); // turn LED off by turning off sinking transistor
+  delay(1000);
 }
