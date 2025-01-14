@@ -1,7 +1,4 @@
 #include <Arduino.h>
-#include <Wire.h>
-#include <SPI.h>
-
 #define LDR  35    // use gpio36 or Analog 1 pin for input
 #define LED 4
 
