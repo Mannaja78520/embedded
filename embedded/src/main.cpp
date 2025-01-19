@@ -235,6 +235,7 @@ void messageReceived(String &topic, String &payload) {
     lcd.print("    Movement");
     lcd.setCursor(4, 1);
     lcd.print("complete.");
+  
   }
 
      // Or setting the cursor in the desired position.
