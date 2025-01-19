@@ -76,7 +76,8 @@ void setup() {
   client.onMessage(messageReceived);
   connect();
   lcd.begin();
-  lcd.backlight();
+  // lcd.backlight();
+  // lcd.
 
   Serial.println("Stepper motor ready. Enter target Country:");
   client.publish(mqtt_command_output_topic, "Stepper motor ready. Enter target Country:");
@@ -235,6 +236,7 @@ void messageReceived(String &topic, String &payload) {
     lcd.print("    Movement");
     lcd.setCursor(4, 1);
     lcd.print("complete.");
+    
   
   }
 
