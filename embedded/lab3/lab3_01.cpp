@@ -14,8 +14,8 @@
 // Add this global variable to keep track of the button state
 int buttonState = BUTTON_RELEASED;
 
-const char ssid[] = "manny";
-const char pass[] = "qwertyui";
+const char ssid[] = "Chocolate";
+const char pass[] = "chocolate";
 
 const char mqtt_broker[]="test.mosquitto.org";
 const char mqtt_command_input_topic[]="group1.2/command/input";

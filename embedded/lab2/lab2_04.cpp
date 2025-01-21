@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <motor_esp.h>
+#include <Adafruit_BusIO_Register.h>
 
 
 #define motor1PWM 23 
