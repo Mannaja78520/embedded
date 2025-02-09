@@ -16,6 +16,8 @@ void IRAM_ATTR onTimer() {
     tone(BUZZER, melody[currentNote]);
     currentNote = (currentNote + 1) % 9; 
     
+
+    
    
     timerAlarmWrite(My_timer, noteDurations[currentNote] * 1000, true); 
 }
